@@ -17,20 +17,22 @@ FetchContent_MakeAvailable(Boost)
 set(BOOST_ENABLE_CMAKE ON)
 set(BOOST_INCLUDE_LIBRARIES asio system)
 
-add_library(boost INTERFACE)
-target_link_libraries(boost INTERFACE
+file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
+
+add_library(rps ${SOURCE_FILES})
+target_include_directories(rps PUBLIC include)
+target_link_libraries(rps PUBLIC
   Boost::asio
   Boost::system
 )
 
-target_compile_definitions(boost INTERFACE
+target_compile_definitions(rps PUBLIC
   BOOST_ASIO_HEADER_ONLY
   BOOST_SYSTEM_HEADER_ONLY
 )
 
 add_executable(rps_client apps/rps_client.cpp)
-target_link_libraries(rps_client PRIVATE boost)
+target_link_libraries(rps_client PRIVATE rps)
 
 add_executable(rps_server apps/rps_server.cpp)
-target_link_libraries(rps_server PRIVATE boost)
-
+target_link_libraries(rps_server PRIVATE rps)
